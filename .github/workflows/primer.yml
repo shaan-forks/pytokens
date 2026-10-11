@@ -34,11 +34,14 @@ jobs:
             --pr HEAD \
             --output primer-report.md
           PRIMER_EXIT_CODE=$?
-          echo "exit_code=$PRIMER_EXIT_CODE" >> $GITHUB_OUTPUT
+          echo "exit_code=$PRIMER_EXIT_CODE" >> "$GITHUB_OUTPUT"
           exit 0  # Always succeed so subsequent steps run
 
+      - name: Show Primer report
+        run: cat primer-report.md >> "$GITHUB_STEP_SUMMARY"
+
       - name: Post results as PR comment
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v7
         with:
           script: |
